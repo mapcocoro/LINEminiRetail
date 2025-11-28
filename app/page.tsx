@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma'
 import ProductCard from '@/components/products/ProductCard'
 import Badge from '@/components/ui/Badge'
 
+export const dynamic = 'force-dynamic'
+
 async function getPopularProducts() {
   return await prisma.product.findMany({
     where: { isActive: true, isPopular: true },

@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import { prisma } from '@/lib/prisma'
 import ProductCard from '@/components/products/ProductCard'
 
+export const dynamic = 'force-dynamic'
+
 interface ProductsPageProps {
   searchParams: Promise<{ category?: string; filter?: string }>
 }

@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma'
 import BusinessCalendar from '@/components/calendar/BusinessCalendar'
 import { Clock, MapPin, Phone, Car } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 async function getBusinessDays() {
   const today = new Date()
   const threeMonthsLater = new Date()
