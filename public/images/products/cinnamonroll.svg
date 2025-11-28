@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- シナモンロール本体 -->
+  <ellipse cx="100" cy="115" rx="60" ry="45" fill="#DEB887"/>
+  <!-- 渦巻き模様 -->
+  <path d="M100 115 Q100 90 120 90 Q140 90 140 110 Q140 130 120 130 Q100 130 100 115" stroke="#8B4513" stroke-width="4" fill="none"/>
+  <path d="M100 115 Q100 100 110 100 Q125 100 125 115 Q125 125 110 125" stroke="#8B4513" stroke-width="3" fill="none"/>
+  <circle cx="100" cy="112" r="8" fill="#8B4513"/>
+  <!-- アイシング -->
+  <path d="M60 100 Q80 95 100 100 Q120 95 140 100" stroke="white" stroke-width="6" fill="none" opacity="0.9"/>
+  <path d="M70 115 Q90 110 110 115 Q130 110 145 115" stroke="white" stroke-width="5" fill="none" opacity="0.8"/>
+  <!-- ツヤ -->
+  <ellipse cx="80" cy="95" rx="10" ry="6" fill="white" opacity="0.3"/>
+</svg>

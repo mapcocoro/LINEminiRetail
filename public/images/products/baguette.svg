@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- バゲット本体 -->
+  <ellipse cx="100" cy="110" rx="85" ry="25" fill="#CD853F"/>
+  <ellipse cx="100" cy="108" rx="80" ry="22" fill="#DEB887"/>
+  <!-- クープ（斜めの切れ込み） -->
+  <path d="M25 105 L40 115" stroke="#8B4513" stroke-width="2.5"/>
+  <path d="M50 100 L70 115" stroke="#8B4513" stroke-width="2.5"/>
+  <path d="M80 98 L100 113" stroke="#8B4513" stroke-width="2.5"/>
+  <path d="M110 98 L130 113" stroke="#8B4513" stroke-width="2.5"/>
+  <path d="M140 100 L160 115" stroke="#8B4513" stroke-width="2.5"/>
+  <!-- クープの影（立体感） -->
+  <path d="M27 107 L42 117" stroke="#A0522D" stroke-width="1"/>
+  <path d="M52 102 L72 117" stroke="#A0522D" stroke-width="1"/>
+  <path d="M82 100 L102 115" stroke="#A0522D" stroke-width="1"/>
+  <path d="M112 100 L132 115" stroke="#A0522D" stroke-width="1"/>
+  <path d="M142 102 L162 117" stroke="#A0522D" stroke-width="1"/>
+  <!-- ツヤ -->
+  <ellipse cx="70" cy="98" rx="20" ry="6" fill="white" opacity="0.2"/>
+</svg>

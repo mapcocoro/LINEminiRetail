@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- 下のパン -->
+  <path d="M30 130 Q100 140 170 130 L170 145 Q100 155 30 145 Z" fill="#DEB887"/>
+  <!-- レタス -->
+  <path d="M35 125 Q55 118 75 125 Q95 118 115 125 Q135 118 155 125 Q168 118 170 125" fill="#90EE90"/>
+  <!-- チーズ -->
+  <rect x="40" y="105" width="55" height="20" fill="#FFD700" transform="rotate(-5 67 115)"/>
+  <rect x="105" y="105" width="55" height="20" fill="#FFD700" transform="rotate(5 132 115)"/>
+  <!-- ハム -->
+  <ellipse cx="70" cy="100" rx="30" ry="12" fill="#FFB6C1"/>
+  <ellipse cx="130" cy="100" rx="30" ry="12" fill="#FFB6C1"/>
+  <!-- ハムの模様 -->
+  <ellipse cx="60" cy="98" rx="5" ry="3" fill="#FFC0CB" opacity="0.5"/>
+  <ellipse cx="80" cy="102" rx="4" ry="2" fill="#FFC0CB" opacity="0.5"/>
+  <ellipse cx="120" cy="98" rx="5" ry="3" fill="#FFC0CB" opacity="0.5"/>
+  <ellipse cx="140" cy="102" rx="4" ry="2" fill="#FFC0CB" opacity="0.5"/>
+  <!-- 上のパン -->
+  <path d="M30 95 Q100 85 170 95 L170 75 Q100 60 30 75 Z" fill="#F5DEB3"/>
+  <path d="M30 75 Q100 60 170 75" fill="#DEB887"/>
+</svg>

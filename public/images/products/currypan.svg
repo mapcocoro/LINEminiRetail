@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- カレーパン本体（揚げパン） -->
+  <ellipse cx="100" cy="110" rx="65" ry="45" fill="#CD853F"/>
+  <!-- パン粉のテクスチャ -->
+  <ellipse cx="100" cy="105" rx="60" ry="40" fill="#DEB887"/>
+  <!-- パン粉の粒々 -->
+  <circle cx="70" cy="95" r="3" fill="#D2691E"/>
+  <circle cx="85" cy="90" r="2.5" fill="#D2691E"/>
+  <circle cx="100" cy="88" r="3" fill="#D2691E"/>
+  <circle cx="115" cy="90" r="2.5" fill="#D2691E"/>
+  <circle cx="130" cy="95" r="3" fill="#D2691E"/>
+  <circle cx="75" cy="110" r="2.5" fill="#D2691E"/>
+  <circle cx="90" cy="105" r="3" fill="#D2691E"/>
+  <circle cx="110" cy="105" r="3" fill="#D2691E"/>
+  <circle cx="125" cy="110" r="2.5" fill="#D2691E"/>
+  <circle cx="80" cy="120" r="2" fill="#D2691E"/>
+  <circle cx="100" cy="118" r="2.5" fill="#D2691E"/>
+  <circle cx="120" cy="120" r="2" fill="#D2691E"/>
+  <!-- ツヤ -->
+  <ellipse cx="80" cy="90" rx="12" ry="8" fill="white" opacity="0.2"/>
+</svg>

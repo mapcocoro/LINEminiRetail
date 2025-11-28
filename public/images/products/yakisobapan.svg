@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- コッペパン本体 -->
+  <ellipse cx="100" cy="120" rx="75" ry="35" fill="#DEB887"/>
+  <ellipse cx="100" cy="115" rx="70" ry="30" fill="#F5DEB3"/>
+  <!-- 切れ込み -->
+  <path d="M35 115 Q100 100 165 115" stroke="#CD853F" stroke-width="2" fill="none"/>
+  <!-- 焼きそば -->
+  <path d="M45 112 Q60 108 75 112 Q90 116 105 112 Q120 108 135 112 Q150 116 160 112" stroke="#4A4A4A" stroke-width="4" fill="none"/>
+  <path d="M50 108 Q65 104 80 108 Q95 112 110 108 Q125 104 140 108 Q155 112 158 108" stroke="#5D4037" stroke-width="3" fill="none"/>
+  <path d="M48 116 Q63 112 78 116 Q93 120 108 116 Q123 112 138 116 Q153 120 157 116" stroke="#4A4A4A" stroke-width="3" fill="none"/>
+  <!-- 紅生姜 -->
+  <ellipse cx="80" cy="108" rx="4" ry="2" fill="#FF6B6B"/>
+  <ellipse cx="120" cy="110" rx="3" ry="2" fill="#FF6B6B"/>
+  <!-- 青のり -->
+  <circle cx="90" cy="112" r="1.5" fill="#228B22"/>
+  <circle cx="110" cy="110" r="1.5" fill="#228B22"/>
+  <circle cx="130" cy="112" r="1.5" fill="#228B22"/>
+</svg>

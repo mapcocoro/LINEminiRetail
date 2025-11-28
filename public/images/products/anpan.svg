@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- あんパン本体 -->
+  <ellipse cx="100" cy="110" rx="60" ry="50" fill="#CD853F"/>
+  <!-- 上部の焼き色 -->
+  <ellipse cx="100" cy="100" rx="55" ry="45" fill="#DEB887"/>
+  <!-- 中央のへそ（ごま） -->
+  <ellipse cx="100" cy="95" rx="8" ry="6" fill="#2F4F4F"/>
+  <!-- ごまの粒 -->
+  <ellipse cx="95" cy="92" rx="2" ry="1.5" fill="#1a1a1a"/>
+  <ellipse cx="105" cy="93" rx="2" ry="1.5" fill="#1a1a1a"/>
+  <ellipse cx="100" cy="98" rx="2" ry="1.5" fill="#1a1a1a"/>
+  <!-- ツヤ -->
+  <ellipse cx="80" cy="85" rx="15" ry="10" fill="white" opacity="0.3"/>
+</svg>

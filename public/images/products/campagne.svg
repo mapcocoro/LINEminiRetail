@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- カンパーニュ本体 -->
+  <ellipse cx="100" cy="115" rx="65" ry="55" fill="#8B7355"/>
+  <ellipse cx="100" cy="110" rx="60" ry="50" fill="#A08060"/>
+  <!-- 粉をまぶした感じ -->
+  <ellipse cx="100" cy="105" rx="55" ry="45" fill="#C4A77D" opacity="0.5"/>
+  <!-- クープ（十字） -->
+  <path d="M100 70 L100 140" stroke="#6B5344" stroke-width="4"/>
+  <path d="M55 105 L145 105" stroke="#6B5344" stroke-width="4"/>
+  <!-- 粉の粒 -->
+  <circle cx="70" cy="85" r="2" fill="#F5F5DC" opacity="0.7"/>
+  <circle cx="90" cy="80" r="1.5" fill="#F5F5DC" opacity="0.7"/>
+  <circle cx="115" cy="82" r="2" fill="#F5F5DC" opacity="0.7"/>
+  <circle cx="130" cy="90" r="1.5" fill="#F5F5DC" opacity="0.7"/>
+  <circle cx="75" cy="130" r="1.5" fill="#F5F5DC" opacity="0.7"/>
+  <circle cx="125" cy="125" r="2" fill="#F5F5DC" opacity="0.7"/>
+</svg>

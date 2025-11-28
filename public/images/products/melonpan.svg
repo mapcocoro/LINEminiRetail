@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- メロンパン本体 -->
+  <ellipse cx="100" cy="110" rx="65" ry="55" fill="#F4A460"/>
+  <!-- クッキー生地 -->
+  <ellipse cx="100" cy="105" rx="60" ry="50" fill="#FFEFD5"/>
+  <!-- メロン模様（格子） -->
+  <path d="M45 80 Q100 130 155 80" stroke="#DEB887" stroke-width="2" fill="none"/>
+  <path d="M40 100 Q100 150 160 100" stroke="#DEB887" stroke-width="2" fill="none"/>
+  <path d="M45 120 Q100 170 155 120" stroke="#DEB887" stroke-width="2" fill="none"/>
+  <path d="M60 60 Q60 110 60 150" stroke="#DEB887" stroke-width="2" fill="none"/>
+  <path d="M80 55 Q80 110 80 155" stroke="#DEB887" stroke-width="2" fill="none"/>
+  <path d="M100 50 Q100 110 100 160" stroke="#DEB887" stroke-width="2" fill="none"/>
+  <path d="M120 55 Q120 110 120 155" stroke="#DEB887" stroke-width="2" fill="none"/>
+  <path d="M140 60 Q140 110 140 150" stroke="#DEB887" stroke-width="2" fill="none"/>
+  <!-- ツヤ -->
+  <ellipse cx="75" cy="85" rx="12" ry="8" fill="white" opacity="0.4"/>
+</svg>

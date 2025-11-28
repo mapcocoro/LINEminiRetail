@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- チョコクロワッサン本体 -->
+  <path d="M30 120 Q50 70 100 80 Q150 70 170 120 Q150 140 100 135 Q50 140 30 120" fill="#D2691E"/>
+  <!-- 層の表現 -->
+  <path d="M40 115 Q60 85 100 90 Q140 85 160 115" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <path d="M50 110 Q70 90 100 95 Q130 90 150 110" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <path d="M60 105 Q80 92 100 95 Q120 92 140 105" stroke="#8B4513" stroke-width="2" fill="none"/>
+  <!-- チョコレート -->
+  <ellipse cx="100" cy="125" rx="25" ry="8" fill="#3D2314"/>
+  <ellipse cx="85" cy="123" rx="5" ry="3" fill="#5D4037"/>
+  <!-- ツヤ -->
+  <ellipse cx="75" cy="95" rx="12" ry="6" fill="white" opacity="0.25"/>
+</svg>
