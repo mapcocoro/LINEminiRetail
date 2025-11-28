@@ -2,6 +2,8 @@ import { prisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { Plus, Edit, AlertTriangle } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 async function getProducts() {
   return await prisma.product.findMany({
     include: { category: true },

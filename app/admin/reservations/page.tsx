@@ -1,6 +1,8 @@
 import { prisma } from '@/lib/prisma'
 import { Clock, User, Package } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
+
 async function getReservations() {
   return await prisma.reservation.findMany({
     include: {
