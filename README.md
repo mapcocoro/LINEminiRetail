@@ -4,7 +4,7 @@
 
 ## デモサイト
 
-**https://lin-emini-retail.vercel.app**
+**https://lin-emini-retail.super-night-76d8.workers.dev**（Basic認証あり）
 
 ## 機能一覧
 
@@ -184,7 +184,7 @@ LINEminiRetail/
 1. [LINE Developers Console](https://developers.line.biz/)でプロバイダーとLINEログインチャネルを作成
 2. LIFFアプリを追加
    - サイズ: Full
-   - エンドポイントURL: `https://lin-emini-retail.vercel.app`
+   - エンドポイントURL: `https://lin-emini-retail.super-night-76d8.workers.dev`
 3. LIFF IDを環境変数`NEXT_PUBLIC_LIFF_ID`に、チャネルIDを`LINE_LOGIN_CHANNEL_ID`に設定
 4. API呼び出し時に `liff.getIDToken()` の値を `X-Line-Id-Token` ヘッダーで送る（サーバー側でLINEに問い合わせて本人確認する。`DEMO_MODE` は外す）
 5. LINE公式アカウントと連携（任意）
