@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import CouponCard from '@/components/coupons/CouponCard'
 import { CloudRain, Gift, Sparkles } from 'lucide-react'
 
@@ -6,7 +6,7 @@ export const dynamic = 'force-dynamic'
 
 async function getAvailableCoupons() {
   const now = new Date()
-  return await prisma.coupon.findMany({
+  return await getPrisma().coupon.findMany({
     where: {
       isActive: true,
       validFrom: { lte: now },

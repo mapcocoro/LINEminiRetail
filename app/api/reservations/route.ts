@@ -1,12 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
+import { getRequestUser } from '@/lib/auth'
+import { parseReservationInput } from '@/lib/reservationInput'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
-  // In real app, get user from session/LIFF
-  // For demo, return all reservations
+class OutOfStockError extends Error {}
+
+// 自分の予約だけを返す
+export async function GET(request: NextRequest) {
+  const prisma = getPrisma()
+  const user = await getRequestUser(request, prisma)
+  if (!user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   const reservations = await prisma.reservation.findMany({
+    where: { userId: user.id },
     include: {
       items: {
         include: {
@@ -23,99 +33,111 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { pickupDate, pickupTimeSlot, note, items, totalAmount } = body
-
-    // In real app, get user from LIFF session
-    // For demo, create or get a demo user
-    let user = await prisma.user.findUnique({
-      where: { lineUserId: 'demo-user' },
-    })
-
+    const prisma = getPrisma()
+    const user = await getRequestUser(request, prisma)
     if (!user) {
-      user = await prisma.user.create({
-        data: {
-          lineUserId: 'demo-user',
-          displayName: 'デモユーザー',
-        },
-      })
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Check stock availability
-    for (const item of items) {
-      const product = await prisma.product.findUnique({
-        where: { id: item.productId },
-      })
+    const body = await request.json().catch(() => null)
+    const input = parseReservationInput(body)
+    if (typeof input === 'string') {
+      return NextResponse.json({ error: input }, { status: 400 })
+    }
 
-      if (!product || product.stock < item.quantity) {
+    const products = await prisma.product.findMany({
+      where: { id: { in: input.items.map((item) => item.productId) }, isActive: true },
+    })
+    const productById = new Map(products.map((product) => [product.id, product]))
+
+    // 単価と合計はDBの価格から計算する（クライアントの金額は使わない）
+    const lineItems: { product: (typeof products)[number]; quantity: number }[] = []
+    for (const item of input.items) {
+      const product = productById.get(item.productId)
+      if (!product) {
         return NextResponse.json(
-          { error: `商品「${product?.name || item.productId}」の在庫が不足しています` },
+          { error: '取り扱いのない商品が含まれています' },
           { status: 400 }
         )
       }
+      if (item.quantity > product.maxReserveQty) {
+        return NextResponse.json(
+          { error: `商品「${product.name}」の取り置きは${product.maxReserveQty}個までです` },
+          { status: 400 }
+        )
+      }
+      lineItems.push({ product, quantity: item.quantity })
     }
+    const totalAmount = lineItems.reduce(
+      (sum, { product, quantity }) => sum + product.price * quantity,
+      0
+    )
+    const pointsEarned = Math.floor(totalAmount / 100) // 100円で1ポイント
 
-    // Create reservation with items
-    const reservation = await prisma.reservation.create({
-      data: {
-        userId: user.id,
-        pickupDate: new Date(pickupDate),
-        pickupTimeSlot,
-        note,
-        totalAmount,
-        status: 'pending',
-        items: {
-          create: items.map((item: { productId: string; quantity: number; price: number }) => ({
-            productId: item.productId,
-            quantity: item.quantity,
-            price: item.price,
-          })),
-        },
-      },
-      include: {
-        items: {
-          include: {
-            product: true,
+    // 在庫の確保・予約作成・ポイント付与を1つのトランザクションで行う
+    const reservation = await prisma.$transaction(async (tx) => {
+      for (const { product, quantity } of lineItems) {
+        // 在庫が足りるときだけ減らす（同時に予約されても在庫がマイナスにならない）
+        const { count } = await tx.product.updateMany({
+          where: { id: product.id, isActive: true, stock: { gte: quantity } },
+          data: { stock: { decrement: quantity } },
+        })
+        if (count !== 1) {
+          throw new OutOfStockError(`商品「${product.name}」の在庫が不足しています`)
+        }
+      }
+
+      const reservation = await tx.reservation.create({
+        data: {
+          userId: user.id,
+          pickupDate: input.pickupDate,
+          pickupTimeSlot: input.pickupTimeSlot,
+          note: input.note,
+          totalAmount,
+          status: 'pending',
+          items: {
+            create: lineItems.map(({ product, quantity }) => ({
+              productId: product.id,
+              quantity,
+              price: product.price,
+            })),
           },
         },
-      },
-    })
-
-    // Update stock (decrease by reserved quantity)
-    for (const item of items) {
-      await prisma.product.update({
-        where: { id: item.productId },
-        data: {
-          stock: {
-            decrement: item.quantity,
+        include: {
+          items: {
+            include: {
+              product: true,
+            },
           },
         },
       })
-    }
 
-    // Add points to user (1 point per 100 yen)
-    const pointsEarned = Math.floor(totalAmount / 100)
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        totalPoints: {
-          increment: pointsEarned,
+      await tx.user.update({
+        where: { id: user.id },
+        data: {
+          totalPoints: {
+            increment: pointsEarned,
+          },
         },
-      },
-    })
+      })
 
-    // Record point history
-    await prisma.pointHistory.create({
-      data: {
-        userId: user.id,
-        points: pointsEarned,
-        type: 'earned',
-        description: `取り置き予約 #${reservation.id.slice(-6)}`,
-      },
+      await tx.pointHistory.create({
+        data: {
+          userId: user.id,
+          points: pointsEarned,
+          type: 'earned',
+          description: `取り置き予約 #${reservation.id.slice(-6)}`,
+        },
+      })
+
+      return reservation
     })
 
     return NextResponse.json(reservation, { status: 201 })
   } catch (error) {
+    if (error instanceof OutOfStockError) {
+      return NextResponse.json({ error: error.message }, { status: 409 })
+    }
     console.error('Reservation error:', error)
     return NextResponse.json(
       { error: '予約の作成に失敗しました' },

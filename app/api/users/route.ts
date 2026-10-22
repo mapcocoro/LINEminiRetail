@@ -1,21 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
+import { getRequestUser } from '@/lib/auth'
 
 export const dynamic = 'force-dynamic'
 
+// ログイン中のユーザー自身の情報だけを返す（他人のlineUserIdは指定できない）
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
-  const lineUserId = searchParams.get('lineUserId')
-
-  if (!lineUserId) {
-    return NextResponse.json(
-      { error: 'lineUserId is required' },
-      { status: 400 }
-    )
+  const prisma = getPrisma()
+  const currentUser = await getRequestUser(request, prisma)
+  if (!currentUser) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const user = await prisma.user.findUnique({
-    where: { lineUserId },
+    where: { id: currentUser.id },
     include: {
       coupons: {
         include: { coupon: true },
@@ -33,44 +31,31 @@ export async function GET(request: NextRequest) {
     },
   })
 
-  if (!user) {
-    return NextResponse.json(
-      { error: 'User not found' },
-      { status: 404 }
-    )
-  }
-
   return NextResponse.json(user)
 }
 
+// ユーザー登録（LINEで検証できたユーザーのみ）。プロフィールはIDトークンの内容を使う
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { lineUserId, displayName, pictureUrl } = body
+    const prisma = getPrisma()
+    const user = await getRequestUser(request, prisma)
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
 
-    const user = await prisma.user.upsert({
-      where: { lineUserId },
-      update: {
-        displayName,
-        pictureUrl,
-      },
-      create: {
-        lineUserId,
-        displayName,
-        pictureUrl,
+    // ウェルカムクーポンは1人1回だけ付与する
+    const welcomeCoupon = await prisma.coupon.findFirst({
+      where: {
+        conditions: 'first_visit',
+        isActive: true,
       },
     })
 
-    // If new user, give welcome coupon
-    if (user.createdAt.getTime() > Date.now() - 1000) {
-      const welcomeCoupon = await prisma.coupon.findFirst({
-        where: {
-          conditions: 'first_visit',
-          isActive: true,
-        },
+    if (welcomeCoupon) {
+      const alreadyGranted = await prisma.userCoupon.findFirst({
+        where: { userId: user.id, couponId: welcomeCoupon.id },
       })
-
-      if (welcomeCoupon) {
+      if (!alreadyGranted) {
         await prisma.userCoupon.create({
           data: {
             userId: user.id,

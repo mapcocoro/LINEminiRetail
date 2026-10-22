@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import {
   Package,
   ShoppingBag,
@@ -19,14 +19,14 @@ async function getDashboardStats() {
     totalUsers,
     recentReservations,
   ] = await Promise.all([
-    prisma.product.count({ where: { isActive: true } }),
-    prisma.product.findMany({
+    getPrisma().product.count({ where: { isActive: true } }),
+    getPrisma().product.findMany({
       where: { isActive: true, stock: { lte: 5 } },
       orderBy: { stock: 'asc' },
       take: 5,
     }),
-    prisma.reservation.count({ where: { status: 'pending' } }),
-    prisma.reservation.count({
+    getPrisma().reservation.count({ where: { status: 'pending' } }),
+    getPrisma().reservation.count({
       where: {
         pickupDate: {
           gte: new Date(new Date().setHours(0, 0, 0, 0)),
@@ -34,8 +34,8 @@ async function getDashboardStats() {
         },
       },
     }),
-    prisma.user.count(),
-    prisma.reservation.findMany({
+    getPrisma().user.count(),
+    getPrisma().reservation.findMany({
       include: {
         user: true,
         items: { include: { product: true } },

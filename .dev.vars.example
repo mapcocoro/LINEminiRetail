@@ -1,0 +1,7 @@
+# Local settings for `npm run dev` and `npm run preview` (copy to .dev.vars). Never put the production DB here.
+NEXTJS_ENV=development
+DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/postgres"
+BASIC_AUTH_USER="tester"
+BASIC_AUTH_PASSWORD="change-me"
+DEMO_MODE=true
+# LINE_LOGIN_CHANNEL_ID="your-line-login-channel-id"

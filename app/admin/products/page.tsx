@@ -1,18 +1,18 @@
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import Link from 'next/link'
 import { Plus, Edit, AlertTriangle } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
 async function getProducts() {
-  return await prisma.product.findMany({
+  return await getPrisma().product.findMany({
     include: { category: true },
     orderBy: [{ category: { displayOrder: 'asc' } }, { name: 'asc' }],
   })
 }
 
 async function getCategories() {
-  return await prisma.category.findMany({
+  return await getPrisma().category.findMany({
     orderBy: { displayOrder: 'asc' },
   })
 }

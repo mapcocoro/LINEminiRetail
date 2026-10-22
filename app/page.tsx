@@ -1,13 +1,13 @@
 import Link from 'next/link'
 import { ChevronRight, Clock, MapPin, Ticket, Sparkles } from 'lucide-react'
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import ProductCard from '@/components/products/ProductCard'
 import Badge from '@/components/ui/Badge'
 
 export const dynamic = 'force-dynamic'
 
 async function getPopularProducts() {
-  return await prisma.product.findMany({
+  return await getPrisma().product.findMany({
     where: { isActive: true, isPopular: true },
     include: { category: true },
     take: 4,
@@ -15,7 +15,7 @@ async function getPopularProducts() {
 }
 
 async function getNewProducts() {
-  return await prisma.product.findMany({
+  return await getPrisma().product.findMany({
     where: { isActive: true, isNew: true },
     include: { category: true },
     take: 4,
@@ -24,7 +24,7 @@ async function getNewProducts() {
 
 async function getActiveCoupons() {
   const now = new Date()
-  return await prisma.coupon.findMany({
+  return await getPrisma().coupon.findMany({
     where: {
       isActive: true,
       validFrom: { lte: now },

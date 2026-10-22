@@ -41,3 +41,9 @@ prisma/*.db-journal
 next-env.d.ts
 
 /lib/generated/prisma
+
+# cloudflare (OpenNext / wrangler)
+.open-next
+.wrangler
+.dev.vars*
+!.dev.vars.example

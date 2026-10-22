@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma'
+import { getPrisma } from '@/lib/prisma'
 import BusinessCalendar from '@/components/calendar/BusinessCalendar'
 import { Clock, MapPin, Phone, Car } from 'lucide-react'
 
@@ -9,7 +9,7 @@ async function getBusinessDays() {
   const threeMonthsLater = new Date()
   threeMonthsLater.setMonth(threeMonthsLater.getMonth() + 3)
 
-  return await prisma.businessDay.findMany({
+  return await getPrisma().businessDay.findMany({
     where: {
       date: {
         gte: today,
@@ -20,7 +20,7 @@ async function getBusinessDays() {
 }
 
 async function getRegularHolidays() {
-  const holidays = await prisma.regularHoliday.findMany()
+  const holidays = await getPrisma().regularHoliday.findMany()
   return holidays.map((h) => h.dayOfWeek)
 }
 

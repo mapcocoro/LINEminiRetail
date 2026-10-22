@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
-import { prisma } from '@/lib/prisma'
+import Link from 'next/link'
+import { getPrisma } from '@/lib/prisma'
 import ProductCard from '@/components/products/ProductCard'
 
 export const dynamic = 'force-dynamic'
@@ -9,7 +10,7 @@ interface ProductsPageProps {
 }
 
 async function getCategories() {
-  return await prisma.category.findMany({
+  return await getPrisma().category.findMany({
     orderBy: { displayOrder: 'asc' },
   })
 }
@@ -18,7 +19,7 @@ async function getProducts(categorySlug?: string, filter?: string) {
   const where: Record<string, unknown> = { isActive: true }
 
   if (categorySlug) {
-    const category = await prisma.category.findUnique({
+    const category = await getPrisma().category.findUnique({
       where: { slug: categorySlug },
     })
     if (category) {
@@ -32,7 +33,7 @@ async function getProducts(categorySlug?: string, filter?: string) {
     where.isNew = true
   }
 
-  return await prisma.product.findMany({
+  return await getPrisma().product.findMany({
     where,
     include: { category: true },
     orderBy: { createdAt: 'desc' },
@@ -105,7 +106,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
       {/* Category Filter */}
       <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-4 px-4 pb-2">
-        <a
+        <Link
           href="/products"
           className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
             !currentCategory && !currentFilter
@@ -114,9 +115,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           }`}
         >
           すべて
-        </a>
+        </Link>
         {categories.map((category) => (
-          <a
+          <Link
             key={category.id}
             href={`/products?category=${category.slug}`}
             className={`flex-shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
@@ -126,13 +127,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             }`}
           >
             {category.name}
-          </a>
+          </Link>
         ))}
       </div>
 
       {/* Quick Filters */}
       <div className="flex gap-2">
-        <a
+        <Link
           href="/products?filter=popular"
           className={`px-3 py-1 rounded-full text-xs font-medium ${
             currentFilter === 'popular'
@@ -141,8 +142,8 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           }`}
         >
           🔥 人気
-        </a>
-        <a
+        </Link>
+        <Link
           href="/products?filter=new"
           className={`px-3 py-1 rounded-full text-xs font-medium ${
             currentFilter === 'new'
@@ -151,7 +152,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
           }`}
         >
           ✨ 新商品
-        </a>
+        </Link>
       </div>
 
       {/* Products Grid */}

@@ -27,15 +27,15 @@
 
 | カテゴリ | 技術 |
 |---------|------|
-| フレームワーク | Next.js 14 (App Router) |
+| フレームワーク | Next.js 15 (App Router) |
 | 言語 | TypeScript |
 | スタイリング | Tailwind CSS |
 | データベース | PostgreSQL (Neon on Vercel) |
-| ORM | Prisma 5 |
+| ORM | Prisma 6（driver adapter: pg） |
 | 状態管理 | Zustand |
 | アイコン | Lucide React |
 | LINE連携 | LIFF SDK |
-| ホスティング | Vercel |
+| ホスティング | Cloudflare Workers（OpenNext） |
 
 ## ローカル開発セットアップ
 
@@ -52,34 +52,23 @@ cd LINEminiRetail
 npm install
 ```
 
-### 3. 環境変数の設定
+### 3. ローカル設定
 
-`.env.example`をコピーして`.env`を作成し、必要な値を設定してください。
+`.dev.vars.example` を `.dev.vars` にコピーし、**ローカル用のDB**の接続先などを書きます（`npm run dev` と `npm run preview` の両方がここを読みます）。
 
 ```bash
-cp .env.example .env
+cp .dev.vars.example .dev.vars
 ```
 
-**必要な環境変数:**
-```env
-# Database (ローカル開発用SQLite)
-DATABASE_URL="file:./dev.db"
-
-# LINE LIFF
-NEXT_PUBLIC_LIFF_ID="your-liff-id-here"
-```
+- **本番DBのURLは `.dev.vars` にも `.env` にも書かないでください。**
+- `.env` 系ファイルには `NEXT_PUBLIC_` で始まる値だけを置きます。OpenNextはビルド時に `.env` の中身をWorkerに同梱するため、それ以外があると `npm run deploy` が自動チェックで止まります。
 
 ### 4. データベースのセットアップ
 
 ```bash
-# Prismaクライアント生成
 npx prisma generate
-
-# マイグレーション実行
-npx prisma migrate dev
-
-# シードデータ投入（18商品、3クーポン、デモユーザー）
-npx prisma db seed
+DATABASE_URL="<ローカルDBのURL>" npx prisma db push
+DATABASE_URL="<ローカルDBのURL>" npm run db:seed   # 18商品、3クーポン、デモユーザー
 ```
 
 ### 5. 開発サーバーの起動
@@ -90,28 +79,43 @@ npm run dev
 
 http://localhost:3000 でアプリにアクセスできます。
 
-## Vercelへのデプロイ
+## Cloudflare Workersへのデプロイ
 
-### 1. GitHubリポジトリをVercelに接続
+[OpenNext](https://opennext.js.org/cloudflare) でNext.jsをCloudflare Workers上で動かします（無料プランで動作）。DBはNeon PostgreSQLをそのまま使います。
 
-### 2. Neon PostgreSQLデータベースを作成
-- Vercel Dashboard → Storage → Create Database → Neon
-- プロジェクトに接続
-
-### 3. ビルド設定
-- **Framework Preset**: Next.js
-- **Build Command**: `prisma generate && prisma db push && next build`
-
-### 4. 環境変数（自動設定される）
-- `DATABASE_URL`: Neon接続文字列
-- `NEXT_PUBLIC_LIFF_ID`: LIFF ID（LINE連携時に設定）
-
-### 5. シードデータ投入
-ローカルから本番DBに接続してシード実行：
+### 1. 秘密情報を登録（初回のみ）
 ```bash
-# .envのDATABASE_URLをVercelのNeon URLに変更後
-npx prisma db seed
+npx wrangler secret put DATABASE_URL         # Neonの接続文字列
+npx wrangler secret put BASIC_AUTH_USER
+npx wrangler secret put BASIC_AUTH_PASSWORD  # 長いランダムな文字列
 ```
+`DEMO_MODE` は `wrangler.jsonc` の `vars` で `true` にしています。LINE連携時は `LINE_LOGIN_CHANNEL_ID` も `wrangler secret put` で登録します。
+
+### 2. デプロイ
+```bash
+npm run deploy
+```
+`npm run deploy` はビルド後に `scripts/check-bundle-env.mjs` を実行し、Workerに同梱される環境変数に `NEXT_PUBLIC_` 以外が含まれていればアップロード前に中止します（OpenNextはビルド時に `.env` 系ファイルの中身を同梱するため）。`wrangler deploy` を直接使わず、必ず `npm run deploy` を使ってください。
+
+### 3. ローカルでWorkerとして動かす
+`.dev.vars`（「ローカル設定」参照）を用意してから:
+```bash
+npm run preview   # http://localhost:8787
+```
+
+### 4. DBのスキーマ変更・シード
+ビルド時には自動でスキーマを反映しません。変更したときだけ、手元から実行します:
+```bash
+DATABASE_URL="<NeonのURL>" npm run db:push
+DATABASE_URL="<NeonのURL>" npm run db:seed   # 既存データは消えます
+```
+
+### 環境変数
+- `DATABASE_URL`: Neon接続文字列（secret）
+- `BASIC_AUTH_USER` / `BASIC_AUTH_PASSWORD`: サイト全体（管理画面・APIを含む）のBasic認証（secret）。**本番で未設定だと全ページ503になる**
+- `DEMO_MODE`: `true` にするとLINEログインなしでデモユーザーとして予約できる
+- `NEXT_PUBLIC_LIFF_ID`: LIFF ID（LINE連携時に設定。ビルド時に埋め込まれる）
+- `LINE_LOGIN_CHANNEL_ID`: LINEログインチャネルID（LINE連携時に設定。IDトークンの検証に使う）
 
 ## ディレクトリ構造
 
@@ -181,8 +185,9 @@ LINEminiRetail/
 2. LIFFアプリを追加
    - サイズ: Full
    - エンドポイントURL: `https://lin-emini-retail.vercel.app`
-3. LIFF IDを環境変数`NEXT_PUBLIC_LIFF_ID`に設定
-4. LINE公式アカウントと連携（任意）
+3. LIFF IDを環境変数`NEXT_PUBLIC_LIFF_ID`に、チャネルIDを`LINE_LOGIN_CHANNEL_ID`に設定
+4. API呼び出し時に `liff.getIDToken()` の値を `X-Line-Id-Token` ヘッダーで送る（サーバー側でLINEに問い合わせて本人確認する。`DEMO_MODE` は外す）
+5. LINE公式アカウントと連携（任意）
 
 ## 今後の拡張案
 

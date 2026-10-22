@@ -1,5 +1,9 @@
+import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Cloudflare Workers向けにOpenNextがPrisma Clientを差し替えられるよう、バンドルしない
+  serverExternalPackages: ['@prisma/client', '.prisma/client'],
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
@@ -8,3 +12,5 @@ const nextConfig = {
 };
 
 export default nextConfig;
+
+initOpenNextCloudflareForDev();

@@ -42,12 +42,11 @@ export default function ReservePage() {
           pickupDate: selectedDate.toISOString(),
           pickupTimeSlot: selectedTimeSlot,
           note,
+          // 金額はサーバー側でDBの価格から計算するので送らない
           items: items.map((item) => ({
             productId: item.product.id,
             quantity: item.quantity,
-            price: item.product.price,
           })),
-          totalAmount: getTotalAmount(),
         }),
       })
 
@@ -55,7 +54,8 @@ export default function ReservePage() {
         setIsComplete(true)
         clearCart()
       } else {
-        alert('予約に失敗しました。もう一度お試しください。')
+        const data = await res.json().catch(() => null)
+        alert(data?.error ?? '予約に失敗しました。もう一度お試しください。')
       }
     } catch {
       alert('エラーが発生しました。')
