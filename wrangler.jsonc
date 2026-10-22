@@ -4,6 +4,11 @@
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-09-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  // DB（Neon）が us-east-1 にあるので、Workerもその近くで動かす（東京で動かすとDBとの往復で1ページ数秒かかる）。
+  // DBのリージョンを変えたらここも合わせて変えること
+  "placement": {
+    "region": "aws:us-east-1"
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
